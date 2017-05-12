@@ -20,15 +20,15 @@ namespace Hourly_Reminder
         /// <summary>
         /// The minute of the hour to send reminder
         /// </summary>
-        private int startTime;
+        private int minuteOfHour;
         /// <summary>
         /// The message to display in the notification
         /// </summary>
         private string msg;
         /// <summary>
-        /// Auto-start registry manager object
+        /// Windows registry library object
         /// </summary>
-        private RegLib autoStart = new RegLib("Challenge Reminder Auto-Start", Application.ExecutablePath);
+        private RegLib autoStart = new RegLib("Hourly Reminder Auto-Start", Application.ExecutablePath);
         /// <summary>
         /// If it is the timer's first tick, on the first tick, the timer will adjust the interval to 1 hour
         /// </summary>
@@ -38,7 +38,8 @@ namespace Hourly_Reminder
         /// </summary>
         private bool settingsChanged;
         /// <summary>
-        /// If the form closing event is from tray context menu exit click event
+        /// If the form closing event is from tray context menu "Exit" button click event
+        /// If this is true, this software will exit, otherwise, only the settings window will be hidden
         /// </summary>
         private bool exiting = false;
 
@@ -50,12 +51,12 @@ namespace Hourly_Reminder
         /// Event handler for form load
         /// Load and adjust some settings
         /// </summary>
-        /// <param name="sender">This argument will be ignored</param>
-        /// <param name="e">This argument will be ignored</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Form_Load(object sender, EventArgs e)
         {
             //Set textboxes length limit
-            TxtStartTime.MaxLength = 2;
+            TxtMinute.MaxLength = 2;
             //Load settings
             LoadSettings();
             //settingsChanged can be changed while loading settings, set it back to false
@@ -65,11 +66,11 @@ namespace Hourly_Reminder
         }
         /// <summary>
         /// Event handler for form shown
-        /// Check settings on start hidden and hide the form if needed
-        /// Passing any argument from command line will make this software start hidden
+        /// Check settings "Start hidden" and hide the settings form if needed
+        /// Passing any argument from command line will also make this software start hidden
         /// </summary>
-        /// <param name="sender">This argument will be ignored</param>
-        /// <param name="e">This argument will be ignored</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Form_Shown(object sender, EventArgs e)
         {
             if (BoxStartHidden.Checked || Environment.GetCommandLineArgs().Length > 1)
@@ -84,12 +85,13 @@ namespace Hourly_Reminder
         /// <summary>
         /// Event handler for form closing
         /// Check if settings are changed, and ask the user if he wants to save settings if needed
+        /// Then hides the settings form if this event comes from the close button, or completely exit if it comes from tray context menu "Exit" button
         /// </summary>
-        /// <param name="sender">This argument will be ignored</param>
-        /// <param name="e">This argument will be used to cancel closing event if needed</param>
+        /// <param name="sender"></param>
+        /// <param name="e">The event object, will be used to cancel closing event if needed</param>
         private void Form_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //Cancel closing event if we are not exiting
+            //Cancel closing event if it is not from tray context menu
             if (!exiting)
             {
                 e.Cancel = true;
@@ -97,7 +99,7 @@ namespace Hourly_Reminder
             //If the user changed any settings, ask him what to do
             if (settingsChanged)
             {
-                if (MessageBox.Show("You have changed some settings, do you want to apply them? ", "Challenge Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show("You have changed some settings, do you want to apply them? ", "Hourly Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     //Yes clicked, apply
                     BtnApply.PerformClick();
@@ -120,7 +122,7 @@ namespace Hourly_Reminder
         #region Timer Mechanism
 
         /// <summary>
-        /// Schedule or re-schedule next challenge
+        /// Schedule or re-schedule next reminder
         /// Update startTime before calling this function for correct scheduling
         /// There can be up to 1 second inaccuracy
         /// </summary>
@@ -130,18 +132,19 @@ namespace Hourly_Reminder
             int delay, sec, min;
             //Calculate the amount of seconds until next minute
             sec = 60 - DateTime.Now.Second;
-            //Calculate the amount of minutes from the next minute until next challenge
-            if (DateTime.Now.Minute < startTime)
+            //Calculate the amount of minutes from the next minute until next reminder
+            if (DateTime.Now.Minute < minuteOfHour)
             {
-                //The challenge is coming in this hour
+                //The reminder is in the same hour
                 //Minus one because we are calculating starting the next minute
-                min = startTime - DateTime.Now.Minute - 1;
+                min = minuteOfHour - DateTime.Now.Minute - 1;
             }
             else
             {
-                //We need to calculate how many minutes are remaining in thie hour and add start time
+                //The reminder is in the next hour
+                //We need to calculate how many minutes are remaining in the hour and add startTime
                 //Using 59 instead of 60 because we are calculating starting the next minute
-                min = 59 - DateTime.Now.Minute + startTime;
+                min = 59 - DateTime.Now.Minute + minuteOfHour;
             }
             //Put minutes and seconds into milliseconds
             delay = (min * 60 + sec) * 1000;
@@ -169,16 +172,12 @@ namespace Hourly_Reminder
         }
         /// <summary>
         /// Event handler for timer tick
-        /// The timer only tick once per hour
-        /// Adding another method so isFirstTick does not need to checked might not be more efficient
-        /// The timer will be running even if tray context menu enable is un-checked, because scheduleNotification() is much heavier than a boolean check per hour
+        /// The timer will be running even if tray context menu enable is un-checked
         /// </summary>
-        /// <param name="sender">This argument will be ignored</param>
-        /// <param name="e">This argument will be ignored</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainTimer_Tick(object sender, EventArgs e)
         {
-            //Uncomment the folloing line and run in a debugger to see if calculations in scheduleNotification() are correct
-            //Debug.WriteLine(DateTime.Now.ToLongTimeString());
             //Set interval to 1 hour if needed
             if (isFirstTick)
             {
@@ -199,10 +198,10 @@ namespace Hourly_Reminder
 
         /// <summary>
         /// Event handler for enable click
-        /// Toggle checked state and change the icon
+        /// Toggle checked state and change the tray icon
         /// </summary>
-        /// <param name="sender">This argument will be ignored</param>
-        /// <param name="e">This argument will be ignored</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TrayEnableBtn_Click(object sender, EventArgs e)
         {
             TrayEnableBtn.Checked = !TrayEnableBtn.Checked;
@@ -216,11 +215,11 @@ namespace Hourly_Reminder
             }
         }
         /// <summary>
-        /// Event handler for show click and tray icon double-click
+        /// Event handler for tray context menu "Show" button click and tray icon double-click
         /// Show the window and restore it if minimized
         /// </summary>
-        /// <param name="sender">This argument will be ignored</param>
-        /// <param name="e">This argument will be ignored</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TrayShowBtn_Click(object sender, EventArgs e)
         {
             //Show the window
@@ -230,10 +229,10 @@ namespace Hourly_Reminder
         }
         /// <summary>
         /// Event handler for exit click
-        /// Close this software, this will trigger form closing
+        /// Update flag and call Application.Exit()
         /// </summary>
-        /// <param name="sender">This argument will be ignored</param>
-        /// <param name="e">This argument will be ignored</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TrayExitBtn_Click(object sender, EventArgs e)
         {
             //Set exiting so form closing event will not stop it
@@ -247,17 +246,17 @@ namespace Hourly_Reminder
 
         /// <summary>
         /// Event handler for cancel click
-        /// Discard changed to settings if needed, then hide the form
+        /// Discard changed to settings if needed, then hide the settings form
         /// Since settings loaded are already applied, we do not need to schedule it again
         /// </summary>
-        /// <param name="sender">This argument will be ignored</param>
-        /// <param name="e">This argument will be ignored</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnCancel_Click(object sender, EventArgs e)
         {
             if (settingsChanged)
             {
                 //Write variables back into textboxes
-                TxtStartTime.Text = startTime.ToString();
+                TxtMinute.Text = minuteOfHour.ToString();
                 TxtMsg.Text = msg;
                 //For checkboxes, we need to load the setting again, since they are not saved in a variable
                 BoxStartHidden.Checked = (bool)Properties.Settings.Default["startHidden"];
@@ -269,10 +268,10 @@ namespace Hourly_Reminder
         }
         /// <summary>
         /// Event handler for apply click
-        /// Apply the settings if needed, then hide the form
+        /// Apply the settings if needed, then hide the settings form
         /// </summary>
-        /// <param name="sender">This argument will be ignored</param>
-        /// <param name="e">This argument will be ignored</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnApply_Click(object sender, EventArgs e)
         {
             if (settingsChanged)
@@ -291,7 +290,7 @@ namespace Hourly_Reminder
         {
             if (string.IsNullOrWhiteSpace(TxtMsg.Text))
             {
-                MessageBox.Show("Your message cannot be empty. ", "Challenge Reminder");
+                MessageBox.Show("Your message cannot be empty. ", "Hourly Reminder");
             }
             else
             {
@@ -306,7 +305,7 @@ namespace Hourly_Reminder
         /// <param name="e"></param>
         private void BtnReset_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Do you really want to restore all settings to their default values? ", "Challenge Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Do you really want to restore all settings to their default values? ", "Hourly Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 RestoreSettings();
             }
@@ -322,20 +321,20 @@ namespace Hourly_Reminder
         /// </summary>
         private void LoadSettings()
         {
-            //=====Challenge Start Time=====
+            //=====Minute of the hour=====
             //Load
-            startTime = (int)Properties.Settings.Default["startTime"];
+            minuteOfHour = (int)Properties.Settings.Default["startTime"];
             //Check if it is in valid range
-            if (startTime < 0)
+            if (minuteOfHour < 0)
             {
-                startTime = 0;
+                minuteOfHour = 0;
             }
-            else if (startTime > 59)
+            else if (minuteOfHour > 59)
             {
-                startTime = 59;
+                minuteOfHour = 59;
             }
             //Write into textbox
-            TxtStartTime.Text = startTime.ToString();
+            TxtMinute.Text = minuteOfHour.ToString();
             //=====Message=====
             //Load
             msg = (string)Properties.Settings.Default["msg"];
@@ -346,10 +345,10 @@ namespace Hourly_Reminder
             }
             //Write into textbox
             TxtMsg.Text = msg;
-            //=====Start Hidden=====
+            //=====Start hidden=====
             //Write into checkbox
             BoxStartHidden.Checked = (bool)Properties.Settings.Default["startHidden"];
-            //=====Start With Windows=====
+            //=====Start with Windows=====
             //Write into checkbox
             BoxAutoStart.Checked = autoStart.Validate();
         }
@@ -359,9 +358,9 @@ namespace Hourly_Reminder
         /// </summary>
         private void ApplySettings()
         {
-            //=====Challenge Start Time=====
+            //=====Minute of the hour=====
             //Parse and validate input, then save it into variable
-            if (int.TryParse(TxtStartTime.Text, out int tempStartTime))
+            if (int.TryParse(TxtMinute.Text, out int tempStartTime))
             {
                 //Successfully parsed input, check if it is in valid range
                 if (tempStartTime < 0)
@@ -373,17 +372,17 @@ namespace Hourly_Reminder
                     tempStartTime = 59;
                 }
                 //Write into variable
-                startTime = tempStartTime;
+                minuteOfHour = tempStartTime;
             }
             else
             {
                 //Cannot parse input, use default value
-                startTime = Convert.ToInt32(Properties.Settings.Default.Properties["startTime"].DefaultValue);
+                minuteOfHour = Convert.ToInt32(Properties.Settings.Default.Properties["startTime"].DefaultValue);
             }
             //Write back into textbox to prevent confusion
-            TxtStartTime.Text = startTime.ToString();
+            TxtMinute.Text = minuteOfHour.ToString();
             //Write into settings
-            Properties.Settings.Default["startTime"] = startTime;
+            Properties.Settings.Default["startTime"] = minuteOfHour;
             //=====Message=====
             //Message cannot be an empty string
             if (string.IsNullOrWhiteSpace(TxtMsg.Text))
@@ -394,10 +393,10 @@ namespace Hourly_Reminder
             msg = TxtMsg.Text;
             //Write into settings
             Properties.Settings.Default["msg"] = msg;
-            //=====Start Hidden=====
+            //=====Start hidden=====
             //Write into settings
             Properties.Settings.Default["startHidden"] = BoxStartHidden.Checked;
-            //=====Start With Windows=====
+            //=====Start with Windows=====
             //Write into registry
             if (BoxAutoStart.Checked)
             {
@@ -407,7 +406,7 @@ namespace Hourly_Reminder
             {
                 autoStart.Disable();
             }
-            //=====Warp Up=====
+            //=====Wrap up=====
             //Save settings
             Properties.Settings.Default.Save();
             //Set settingsChanged so the user will not be asked to save settings when closing
@@ -415,7 +414,7 @@ namespace Hourly_Reminder
             //Re-schedule notification
             ScheduleNotification();
             //Ask user if he wants to enable notification if needed
-            if (!TrayEnableBtn.Checked && MessageBox.Show("Notification is disabled, do you want to enable it now? ", "Challenge Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (!TrayEnableBtn.Checked && MessageBox.Show("Notification is disabled, do you want to enable it now? ", "Hourly Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 TrayEnableBtn.PerformClick();
             }
@@ -427,7 +426,7 @@ namespace Hourly_Reminder
         private void RestoreSettings()
         {
             //Load default settings to settings inputs
-            TxtStartTime.Text = (string)Properties.Settings.Default.Properties["startTime"].DefaultValue;
+            TxtMinute.Text = (string)Properties.Settings.Default.Properties["startTime"].DefaultValue;
             TxtMsg.Text = (string)Properties.Settings.Default.Properties["msg"].DefaultValue;
             BoxStartHidden.Checked = Convert.ToBoolean(Properties.Settings.Default.Properties["startHidden"].DefaultValue);
             BoxAutoStart.Checked = false;
@@ -447,14 +446,16 @@ namespace Hourly_Reminder
         /// <param name="msg">The message to display in the notification</param>
         private void DisplayNotification(string msg)
         {
-            TrayIcon.ShowBalloonTip(5000, "Challenge Reminder", msg, ToolTipIcon.Info);
+            //We might want to switch to Windows.UI.Notifications
+            //https://www.whitebyte.info/programming/c/how-to-make-a-notification-from-a-c-desktop-application-in-windows-10
+            TrayIcon.ShowBalloonTip(5000, "Hourly Reminder", msg, ToolTipIcon.Info);
         }
         /// <summary>
         /// Event handler for key down of message textbox
         /// Check if Ctrl+A is pressed, if yes, select all and suppress beep
         /// </summary>
-        /// <param name="sender">This argument will be ignored</param>
-        /// <param name="e">This argument will be ignored</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TxtMsg_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Control && e.KeyCode == Keys.A)
@@ -470,18 +471,18 @@ namespace Hourly_Reminder
         /// Event handler for change of all 4 settings inputs
         /// Set settingsChanged so the user will be asked to save settings when closing
         /// </summary>
-        /// <param name="sender">This argument will be ignored</param>
-        /// <param name="e">This argument will be ignored</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SettingsUpdate(object sender, EventArgs e)
         {
             settingsChanged = true;
         }
         /// <summary>
         /// Event hander for author name link click
-        /// Launch GitHub release page in a browser
+        /// Launch GitHub project page in a browser
         /// </summary>
-        /// <param name="sender">This argument will be ignored</param>
-        /// <param name="e">This argument will be ignored</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LabelAuthor_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://github.com/jspenguin2017/HourlyReminder");

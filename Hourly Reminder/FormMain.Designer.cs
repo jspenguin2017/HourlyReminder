@@ -36,8 +36,8 @@
             this.TraySeparator = new System.Windows.Forms.ToolStripSeparator();
             this.TrayExitBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.TrayIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.LabelStartTime = new System.Windows.Forms.Label();
-            this.TxtStartTime = new System.Windows.Forms.TextBox();
+            this.LabelMinute = new System.Windows.Forms.Label();
+            this.TxtMinute = new System.Windows.Forms.TextBox();
             this.LabelMsg = new System.Windows.Forms.Label();
             this.TxtMsg = new System.Windows.Forms.TextBox();
             this.BtnApply = new System.Windows.Forms.Button();
@@ -97,23 +97,23 @@
             this.TrayIcon.Visible = true;
             this.TrayIcon.DoubleClick += new System.EventHandler(this.TrayShowBtn_Click);
             // 
-            // LabelStartTime
+            // LabelMinute
             // 
-            this.LabelStartTime.AutoSize = true;
-            this.LabelStartTime.Location = new System.Drawing.Point(12, 40);
-            this.LabelStartTime.Name = "LabelStartTime";
-            this.LabelStartTime.Size = new System.Drawing.Size(99, 13);
-            this.LabelStartTime.TabIndex = 0;
-            this.LabelStartTime.Text = "Minute of the hour: ";
+            this.LabelMinute.AutoSize = true;
+            this.LabelMinute.Location = new System.Drawing.Point(12, 40);
+            this.LabelMinute.Name = "LabelMinute";
+            this.LabelMinute.Size = new System.Drawing.Size(99, 13);
+            this.LabelMinute.TabIndex = 0;
+            this.LabelMinute.Text = "Minute of the hour: ";
             // 
-            // TxtStartTime
+            // TxtMinute
             // 
-            this.TxtStartTime.Location = new System.Drawing.Point(155, 37);
-            this.TxtStartTime.Name = "TxtStartTime";
-            this.TxtStartTime.Size = new System.Drawing.Size(217, 20);
-            this.TxtStartTime.TabIndex = 4;
-            this.TxtStartTime.Text = "0";
-            this.TxtStartTime.TextChanged += new System.EventHandler(this.SettingsUpdate);
+            this.TxtMinute.Location = new System.Drawing.Point(155, 37);
+            this.TxtMinute.Name = "TxtMinute";
+            this.TxtMinute.Size = new System.Drawing.Size(217, 20);
+            this.TxtMinute.TabIndex = 4;
+            this.TxtMinute.Text = "0";
+            this.TxtMinute.TextChanged += new System.EventHandler(this.SettingsUpdate);
             // 
             // LabelMsg
             // 
@@ -226,8 +226,8 @@
             this.Controls.Add(this.BtnApply);
             this.Controls.Add(this.TxtMsg);
             this.Controls.Add(this.LabelMsg);
-            this.Controls.Add(this.TxtStartTime);
-            this.Controls.Add(this.LabelStartTime);
+            this.Controls.Add(this.TxtMinute);
+            this.Controls.Add(this.LabelMinute);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimumSize = new System.Drawing.Size(400, 268);
@@ -251,8 +251,8 @@
         private System.Windows.Forms.ToolStripMenuItem TrayExitBtn;
         private System.Windows.Forms.NotifyIcon TrayIcon;
         private System.Windows.Forms.ToolStripSeparator TraySeparator;
-        private System.Windows.Forms.Label LabelStartTime;
-        private System.Windows.Forms.TextBox TxtStartTime;
+        private System.Windows.Forms.Label LabelMinute;
+        private System.Windows.Forms.TextBox TxtMinute;
         private System.Windows.Forms.Label LabelMsg;
         private System.Windows.Forms.TextBox TxtMsg;
         private System.Windows.Forms.Button BtnApply;
