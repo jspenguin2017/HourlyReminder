@@ -95,7 +95,7 @@ namespace Hourly_Reminder
             //If the user changed any settings, ask him what to do
             if (settingsChanged)
             {
-                if (MessageBox.Show("You have changed some settings, do you want to apply them?", "Hourly Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show("You have changed some settings, do you want to apply them? ", "Hourly Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     //Yes clicked, apply
                     BtnApply.PerformClick();
@@ -286,7 +286,7 @@ namespace Hourly_Reminder
         {
             if (string.IsNullOrWhiteSpace(TxtMsg.Text))
             {
-                MessageBox.Show("Your message cannot be empty.", "Hourly Reminder");
+                MessageBox.Show("Your message cannot be empty. ", "Hourly Reminder");
             }
             else
             {
@@ -301,7 +301,7 @@ namespace Hourly_Reminder
         /// <param name="e"></param>
         private void BtnReset_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Do you really want to restore all settings to their default values?", "Hourly Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Do you really want to restore all settings to their default values? ", "Hourly Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 RestoreSettings();
             }
@@ -410,7 +410,7 @@ namespace Hourly_Reminder
             //Re-schedule notification
             ScheduleNotification();
             //Ask user if he wants to enable notification if needed
-            if (!TrayEnableBtn.Checked && MessageBox.Show("Notification is disabled, do you want to enable it now?", "Hourly Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (!TrayEnableBtn.Checked && MessageBox.Show("Notification is disabled, do you want to enable it now? ", "Hourly Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 TrayEnableBtn.PerformClick();
             }

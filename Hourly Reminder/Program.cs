@@ -24,7 +24,7 @@ namespace Hourly_Reminder
             //Check if multiple instances are running
             using (Mutex mutex = new Mutex(false, "Global\\" + appGuid))
             {
-                if (mutex.WaitOne(0, false) || MessageBox.Show("There is already an instance running, do you want to start another one?", "Hourly Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (mutex.WaitOne(0, false) || MessageBox.Show("There is already an instance running, do you want to start another one? ", "Hourly Reminder", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     //A new instance will start if this is the only instance or if the user wants multiple instances
                     Application.EnableVisualStyles();
