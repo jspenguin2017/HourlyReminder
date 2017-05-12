@@ -33,7 +33,7 @@
             this.TrayMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.TrayEnableBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.TrayShowBtn = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.TraySeparator = new System.Windows.Forms.ToolStripSeparator();
             this.TrayExitBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.TrayIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.LabelStartTime = new System.Windows.Forms.Label();
@@ -56,7 +56,7 @@
             this.TrayMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.TrayEnableBtn,
             this.TrayShowBtn,
-            this.toolStripSeparator1,
+            this.TraySeparator,
             this.TrayExitBtn});
             this.TrayMenu.Name = "TrayMenu";
             this.TrayMenu.Size = new System.Drawing.Size(110, 76);
@@ -77,10 +77,10 @@
             this.TrayShowBtn.Text = "Show";
             this.TrayShowBtn.Click += new System.EventHandler(this.TrayShowBtn_Click);
             // 
-            // toolStripSeparator1
+            // TraySeparator
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(106, 6);
+            this.TraySeparator.Name = "TraySeparator";
+            this.TraySeparator.Size = new System.Drawing.Size(106, 6);
             // 
             // TrayExitBtn
             // 
@@ -102,9 +102,9 @@
             this.LabelStartTime.AutoSize = true;
             this.LabelStartTime.Location = new System.Drawing.Point(12, 40);
             this.LabelStartTime.Name = "LabelStartTime";
-            this.LabelStartTime.Size = new System.Drawing.Size(101, 13);
+            this.LabelStartTime.Size = new System.Drawing.Size(99, 13);
             this.LabelStartTime.TabIndex = 0;
-            this.LabelStartTime.Text = "Minute of the Hour: ";
+            this.LabelStartTime.Text = "Minute of the hour: ";
             // 
             // TxtStartTime
             // 
@@ -164,9 +164,9 @@
             this.BoxAutoStart.AutoSize = true;
             this.BoxAutoStart.Location = new System.Drawing.Point(14, 14);
             this.BoxAutoStart.Name = "BoxAutoStart";
-            this.BoxAutoStart.Size = new System.Drawing.Size(120, 17);
+            this.BoxAutoStart.Size = new System.Drawing.Size(117, 17);
             this.BoxAutoStart.TabIndex = 1;
-            this.BoxAutoStart.Text = "Start With Windows";
+            this.BoxAutoStart.Text = "Start with Windows";
             this.BoxAutoStart.UseVisualStyleBackColor = true;
             this.BoxAutoStart.CheckedChanged += new System.EventHandler(this.SettingsUpdate);
             // 
@@ -175,9 +175,9 @@
             this.BoxStartHidden.AutoSize = true;
             this.BoxStartHidden.Location = new System.Drawing.Point(155, 13);
             this.BoxStartHidden.Name = "BoxStartHidden";
-            this.BoxStartHidden.Size = new System.Drawing.Size(85, 17);
+            this.BoxStartHidden.Size = new System.Drawing.Size(83, 17);
             this.BoxStartHidden.TabIndex = 2;
-            this.BoxStartHidden.Text = "Start Hidden";
+            this.BoxStartHidden.Text = "Start hidden";
             this.BoxStartHidden.UseVisualStyleBackColor = true;
             this.BoxStartHidden.CheckedChanged += new System.EventHandler(this.SettingsUpdate);
             // 
@@ -250,7 +250,7 @@
         private System.Windows.Forms.ToolStripMenuItem TrayShowBtn;
         private System.Windows.Forms.ToolStripMenuItem TrayExitBtn;
         private System.Windows.Forms.NotifyIcon TrayIcon;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator TraySeparator;
         private System.Windows.Forms.Label LabelStartTime;
         private System.Windows.Forms.TextBox TxtStartTime;
         private System.Windows.Forms.Label LabelMsg;

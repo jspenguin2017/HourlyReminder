@@ -16,9 +16,9 @@ namespace Hourly_Reminder
         /// <summary>
         /// The version of this software
         /// </summary>
-        public const string VER = "v1.1";
+        public const string VER = "v1.0";
         /// <summary>
-        /// The minute of the hour when challenge start
+        /// The minute of the hour to send reminder
         /// </summary>
         private int startTime;
         /// <summary>
